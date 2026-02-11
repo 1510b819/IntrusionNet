@@ -1,93 +1,156 @@
-# **IntrusionNet**
+# IntrusionNet
 
-**IntrusionNet** is a PyTorch-based neural network for detecting and classifying network intrusions using the **NSL-KDD dataset**. This project preprocesses network traffic data, trains a neural network, and evaluates its performance on multi-class attack detection.
+**Neural Network–Based Intrusion Detection using NSL-KDD**
 
----
-
-## **Features**
-
-* Preprocessing of NSL-KDD dataset (encoding categorical features, normalization)
-* Custom PyTorch Dataset and DataLoader for efficient training
-* Multi-class attack classification
-* Evaluation metrics for model performance
-* Fully customizable neural network architecture
+IntrusionNet is a PyTorch-based intrusion detection system that performs **multi-class classification** on the NSL-KDD dataset and evaluates results using **five high-level attack categories**.
 
 ---
 
-## **Installation**
+## Overview
 
-1. Clone the repository:
+* Fully connected neural network (MLP)
+* Trained on **NSL-KDD**
+* One-hot encoding + feature normalization
+* Multi-class prediction of network intrusions
+* Evaluation with confusion matrix & classification report
+
+---
+
+## Repository Structure
+
+```
+IntrusionNet/
+├── data/
+│   └── nslkdd/
+│       ├── KDDTrain+.txt
+│       └── KDDTest+.txt
+├── src/
+│   ├── dataset.py
+│   ├── model.py
+│   ├── train.py
+│   └── evaluate.py
+├── results/
+│   ├── model.pth
+│   ├── confusion_matrix.png
+│   └── classification_report.csv
+└── README.md
+```
+
+---
+
+## Dataset (NSL-KDD)
+
+NSL-KDD is an improved version of the KDD’99 dataset designed for network intrusion detection research.
+
+**Preprocessing**
+
+* Removes `difficulty` column
+* One-hot encodes categorical features:
+
+  * `protocol_type`
+  * `service`
+  * `flag`
+* Standardizes numerical features
+* Encodes labels using `LabelEncoder`
+
+---
+
+## Model Architecture
+
+Implemented in `model.py`:
+
+```
+Input → Linear(128) → ReLU
+      → Linear(64)  → ReLU
+      → Linear(num_classes)
+```
+
+---
+
+## Training
+
+Run:
 
 ```bash
-git clone https://github.com/1510b819/IntrusionNet.git
-cd IntrusionNet
+python train.py
 ```
 
-2. Create a virtual environment (optional but recommended):
+**Training Details**
+
+* Optimizer: Adam
+* Loss: CrossEntropyLoss
+* Epochs: 25
+* Batch size: 64
+* Device: CPU
+
+Model is saved to:
+
+```
+results/model.pth
+```
+
+---
+
+## 📈 Evaluation
+
+Run:
 
 ```bash
-python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
+python evaluate.py
 ```
 
-3. Install required packages:
+### Attack Category Mapping
+
+Fine-grained attack labels are mapped to:
+
+| Category | Description        |
+| -------- | ------------------ |
+| Normal   | Benign traffic     |
+| DoS      | Denial of Service  |
+| Probe    | Scanning & probing |
+| R2L      | Remote to Local    |
+| U2R      | User to Root       |
+
+### Outputs
+
+* Confusion matrix (`confusion_matrix.png`)
+* Classification report (`classification_report.csv`)
+
+---
+
+## Requirements
+
+```txt
+python >= 3.8
+torch
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+```
+
+Install dependencies:
 
 ```bash
-pip install -r requirements.txt
+pip install torch pandas numpy scikit-learn matplotlib seaborn
 ```
 
 ---
 
-## **Usage**
+## Future Work
 
-1. Prepare the **NSL-KDD dataset** files (`KDDTrain+.txt`, `KDDTest+.txt`).
-2. Update file paths in your script or notebook.
-3. Load data and create dataloaders:
-
-```python
-from dataset import get_dataloaders
-
-train_loader, test_loader, input_size, num_classes = get_dataloaders(
-    "KDDTrain+.txt", "KDDTest+.txt", batch_size=64
-)
-```
-
-4. Define your neural network, train, and evaluate:
-
-```python
-from model import MyNeuralNet  # Example: replace with your model
-model = MyNeuralNet(input_size, num_classes)
-```
-
-5. Train the model and monitor metrics such as accuracy and loss.
+* GPU support
+* Regularization & early stopping
+* Deep architectures (CNN / LSTM)
+* Binary vs multi-class comparison
+* Explainability (SHAP, feature importance)
 
 ---
 
-## **Dataset**
+## References
 
-**NSL-KDD**: A benchmark dataset for network intrusion detection. It improves on the original KDD’99 dataset by removing redundant records and providing a more balanced distribution of attacks.
-
-Columns include network connection features such as:
-
-* `duration`, `protocol_type`, `service`, `src_bytes`, `dst_bytes`, etc.
-* `label` for attack type or normal traffic
+* Tavallaee et al., *A Detailed Analysis of the KDD CUP 99 Data Set*, 2009
+* NSL-KDD Dataset: [https://www.unb.ca/cic/datasets/nsl.html](https://www.unb.ca/cic/datasets/nsl.html)
 
 ---
-
-## **Contributing**
-
-Contributions are welcome! Please:
-
-1. Fork the repo
-2. Create a branch (`git checkout -b feature-name`)
-3. Commit your changes (`git commit -m "Add feature"`)
-4. Push to the branch (`git push origin feature-name`)
-5. Open a Pull Request
-
----
-
-## **License**
-
-This project is licensed under the MIT License.
-
