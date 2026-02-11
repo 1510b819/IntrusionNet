@@ -19,7 +19,7 @@
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/IntrusionNet.git
+git clone https://github.com/1510b819/IntrusionNet.git
 cd IntrusionNet
 ```
 
