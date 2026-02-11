@@ -91,7 +91,7 @@ results/model.pth
 
 ---
 
-## 📈 Evaluation
+## Evaluation
 
 Run:
 
